@@ -15,18 +15,14 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/7");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/8");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 
-urls.forEach((url)=>{
-	getTitle(url);
-});
+async function main(){
+	urls.forEach((url)=>{
+		let body = await getBody(url);
 
-function getTitle(url){
-	request(url, (e, response, body) => {
-		if (e) console.error(e);
-		
 		try {
-			const dom = new JSDOM(body);
+			let dom = new JSDOM(body);
 			
-			const aList = dom.window.document.querySelectorAll("#primary > div > div > div > article > header > h2 > a");
+			let aList = dom.window.document.querySelectorAll("#primary > div > div > div > article > header > h2 > a");
 			aList.forEach((a)=>{
 				console.log(a.textContent);
 			});
@@ -35,5 +31,20 @@ function getTitle(url){
 		} catch (e) {
 			console.error(e);
 		}
+
 	});
 }
+
+function getBody(url){
+	return new Promise((resolve, reject)=>{
+		request(url, (e, response, body)=>{
+			if(!e){
+				resolve(body);
+			}else{
+				reject(e);
+			}
+		});
+	});
+}
+
+main();
