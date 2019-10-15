@@ -20,9 +20,7 @@ urls.forEach((url)=>{
 });
 
 function getTitle(url){
-	request(url, (e, response, body) => {
-		if (e) console.error(e);
-		
+	request(url).then((body)=>{
 		try {
 			const dom = new JSDOM(body);
 			
@@ -30,7 +28,7 @@ function getTitle(url){
 			aList.forEach((a)=>{
 				console.log(a.textContent);
 			});
-
+	
 			console.log("--------------------------------------------------------------------");
 		} catch (e) {
 			console.error(e);
