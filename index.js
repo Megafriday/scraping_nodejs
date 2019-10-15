@@ -2,6 +2,8 @@
 const request = require('request');
 const {JSDOM} = require('jsdom');
 
+const selector = "#primary > div > div > div > article > header > h2 > a";
+
 const urls = [];
 urls.push("https://www.sejuku.net/blog/category/programing/node-js");
 urls.push("https://www.sejuku.net/blog/category/programing/node-js/page/2");
@@ -26,7 +28,7 @@ function getTitle(url){
 		try {
 			const dom = new JSDOM(body);
 			
-			const aList = dom.window.document.querySelectorAll("#primary > div > div > div > article > header > h2 > a");
+			const aList = dom.window.document.querySelectorAll(selector);
 			aList.forEach((a)=>{
 				console.log(a.textContent);
 			});
