@@ -15,25 +15,27 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/7");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/8");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 
-async function main(){
-	urls.forEach((url)=>{
-		let body = await getBody(url);
+urls.forEach((url)=>{
+	getBody(url).then((body)=>{
 
 		try {
-			let dom = new JSDOM(body);
+			const dom = new JSDOM(body);
 			
-			let aList = dom.window.document.querySelectorAll("#primary > div > div > div > article > header > h2 > a");
+			const selector = "#primary > div > div > div > article > header > h2 > a";
+			const aList = dom.window.document.querySelectorAll(selector);
+
 			aList.forEach((a)=>{
 				console.log(a.textContent);
 			});
-
+	
 			console.log("--------------------------------------------------------------------");
 		} catch (e) {
 			console.error(e);
 		}
 
 	});
-}
+
+});
 
 function getBody(url){
 	return new Promise((resolve, reject)=>{
@@ -46,5 +48,3 @@ function getBody(url){
 		});
 	});
 }
-
-main();
