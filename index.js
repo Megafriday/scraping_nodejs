@@ -1,5 +1,5 @@
 'use strict';
-const request = require('request-promise');
+const rpn = require('request-promise-native');
 const {JSDOM} = require('jsdom');
 
 const urls = [];
@@ -20,18 +20,29 @@ urls.forEach((url)=>{
 });
 
 function getTitle(url){
-	request(url).then((body)=>{
+	rpn(url).then((body)=>{
 		try {
-			const dom = new JSDOM(body);
-			
-			const aList = dom.window.document.querySelectorAll("#primary > div > div > div > article > header > h2 > a");
-			aList.forEach((a)=>{
-				console.log(a.textContent);
-			});
+			// const dom = new JSDOM(body);
+			getDom(body).then((dom)=>{
+				
+				const selector = "#primary > div > div > div > article > header > h2 > a";
+				const aList = dom.window.document.querySelectorAll(selector);
 	
-			console.log("--------------------------------------------------------------------");
+				aList.forEach((a)=>{
+					console.log(a.textContent);
+				});
+		
+				console.log("--------------------------------------------------------------------");
+			});
+			
 		} catch (e) {
 			console.error(e);
 		}
+	});
+}
+
+function getDom(body){
+	return new Promise((resolve)=>{
+		resolve(new JSDOM(body));
 	});
 }
