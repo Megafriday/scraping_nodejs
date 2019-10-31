@@ -15,27 +15,29 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/7");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/8");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 
-urls.forEach((url)=>{
-	printTitle(url);
-});
+Promise
+  .all(urls.map(url => printTitle(url)))
+  .then(results => {
+    results.forEach(({ url, aList }) => {
+      console.log(url);
+      console.log([...aList].map(a => `\t${a.textContent}`).join('\n'));
+    })
+  }).catch(e => {
+    console.error(e);
+  })
 
-function printTitle(url){
-	request(url, (e, response, body) => {
-		if (e) console.error(e);
-		
-		try {
-			const dom = new JSDOM(body);
-
-			const selector = "#primary > div > div > div > article > header > h2 > a";
-			const aList = dom.window.document.querySelectorAll(selector);
-			
-			aList.forEach((a)=>{
-				console.log(a.textContent);
-			});
-
-			console.log("--------------------------------------------------------------------");
-		} catch (e) {
-			console.error(e);
-		}
-	});
+function printTitle(url) {
+  return new Promise((resolve, reject) => {
+    request(url, (e, response, body) => {
+      if (e) reject(e);
+      try {
+        const dom = new JSDOM(body);
+        const selector = "#primary > div > div > div > article > header > h2 > a";
+        const aList = dom.window.document.querySelectorAll(selector);
+        resolve({ url, aList });
+      } catch (e2) {
+        reject(e2);
+      }
+    });
+  });
 }
