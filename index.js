@@ -1,5 +1,5 @@
 'use strict';
-const request = require('request');
+const rp = require('request-promise');
 const {JSDOM} = require('jsdom');
 
 const urls = [];
@@ -15,27 +15,18 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/7");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/8");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 
-urls.forEach((url)=>{
-	printTitle(url);
-});
+const selector = "#primary > div > div > div > article > header > h2 > a";
 
-function printTitle(url){
-	request(url, (e, response, body) => {
-		if (e) console.error(e);
-		
-		try {
-			const dom = new JSDOM(body);
+Promise
+  .all(urls.map(url => rp(url)))
+  .then(htmls => {
+    htmls.forEach((html, i) => {
+      console.log(urls[i]);
 
-			const selector = "#primary > div > div > div > article > header > h2 > a";
-			const aList = dom.window.document.querySelectorAll(selector);
-			
-			aList.forEach((a)=>{
-				console.log(a.textContent);
-			});
-
-			console.log("--------------------------------------------------------------------");
-		} catch (e) {
-			console.error(e);
-		}
-	});
-}
+      const dom = new JSDOM(html);
+      const aList = dom.window.document.querySelectorAll(selector);
+      console.log([...aList].map(a => `\t${a.textContent}`).join('\n'));
+    })
+  }).catch(e => {
+    console.error(e);
+  });
