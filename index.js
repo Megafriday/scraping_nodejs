@@ -19,8 +19,9 @@ Promise
   .all(urls.map(url => printTitle(url)))
   .then(results => {
     results.forEach(({ url, aList }) => {
-      console.log(url);
-      console.log([...aList].map(a => `\t${a.textContent}`).join('\n'));
+	  console.log(url);
+	  console.log(Array.from(aList).map(a => `\t${a.textContent}`).join('\n'));
+    //   console.log([...aList].map(a => `\t${a.textContent}`).join('\n'));
     })
   }).catch(e => {
     console.error(e);
