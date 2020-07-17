@@ -11,7 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jsdom": "^15.2.0",
-    "request": "^2.88.0"
+    "jsdom": "^16.3.0",
+    "request": "^2.88.2"
   }
 }
