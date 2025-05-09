@@ -1,5 +1,5 @@
 'use strict';
-const request = require('request');
+const axios = require('axios');
 const { JSDOM } = require('jsdom');
 
 const urls = [];
@@ -16,35 +16,32 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/8");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 
 urls.forEach((url) => {
-	getBody(url).then((body) => {
+        getBody(url).then((body) => {
 
-		try {
-			const dom = new JSDOM(body);
+                try {
+                        const dom = new JSDOM(body);
 
-			const selector = "#primary > div > div > div > article > header > h2 > a";
-			const aList = dom.window.document.querySelectorAll(selector);
+                        const selector = "#primary > div > div > div > article > header > h2 > a";
+                        const aList = dom.window.document.querySelectorAll(selector);
 
-			aList.forEach((a) => {
-				console.log(a.textContent);
-			});
+                        aList.forEach((a) => {
+                                console.log(a.textContent);
+                        });
 
-			console.log("--------------------------------------------------------------------");
-		} catch (e) {
-			console.error(e);
-		}
+                        console.log("--------------------------------------------------------------------");
+                } catch (e) {
+                        console.error(e);
+                }
 
-	});
+        }).catch(error => {
+                console.error(error);
+        });
 
 });
 
 function getBody(url) {
-	return new Promise((resolve, reject) => {
-		request(url, (e, response, body) => {
-			if (!e) {
-				resolve(body);
-			} else {
-				reject(e);
-			}
-		});
-	});
+        return axios.get(url)
+                .then(response => {
+                        return response.data;
+                });
 }
