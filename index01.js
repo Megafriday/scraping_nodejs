@@ -1,5 +1,5 @@
 'use strict';
-const request = require('request');
+const axios = require('axios');
 const {JSDOM} = require('jsdom');
 
 const urls = [];
@@ -16,26 +16,28 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/8");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 
 urls.forEach((url)=>{
-	printTitle(url);
+        printTitle(url);
 });
 
 function printTitle(url){
-	request(url, (e, response, body) => {
-		if (e) console.error(e);
-		
-		try {
-			const dom = new JSDOM(body);
+        axios.get(url)
+                .then(response => {
+                        try {
+                                const dom = new JSDOM(response.data);
 
-			const selector = "#primary > div > div > div > article > header > h2 > a";
-			const aList = dom.window.document.querySelectorAll(selector);
-			
-			aList.forEach((a)=>{
-				console.log(a.textContent);
-			});
+                                const selector = "#primary > div > div > div > article > header > h2 > a";
+                                const aList = dom.window.document.querySelectorAll(selector);
+                                
+                                aList.forEach((a)=>{
+                                        console.log(a.textContent);
+                                });
 
-			console.log("--------------------------------------------------------------------");
-		} catch (e) {
-			console.error(e);
-		}
-	});
+                                console.log("--------------------------------------------------------------------");
+                        } catch (e) {
+                                console.error(e);
+                        }
+                })
+                .catch(error => {
+                        console.error(error);
+                });
 }

@@ -1,5 +1,5 @@
 'use strict';
-const rp = require('request-promise');
+const axios = require('axios');
 const { JSDOM } = require('jsdom');
 
 const urls = [];
@@ -18,15 +18,15 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 const selector = "#primary > div > div > div > article > header > h2 > a";
 
 Promise
-	.all(urls.map(url => rp(url)))
-	.then(htmls => {
-		htmls.forEach((html, i) => {
-			console.log(urls[i]);
+        .all(urls.map(url => axios.get(url)))
+        .then(responses => {
+                responses.forEach((response, i) => {
+                        console.log(urls[i]);
 
-			const dom = new JSDOM(html);
-			const aList = dom.window.document.querySelectorAll(selector);
-			console.log([...aList].map(a => `\t${a.textContent}`).join('\n'));
-		})
-	}).catch(e => {
-		console.error(e);
-	});
+                        const dom = new JSDOM(response.data);
+                        const aList = dom.window.document.querySelectorAll(selector);
+                        console.log([...aList].map(a => `\t${a.textContent}`).join('\n'));
+                })
+        }).catch(e => {
+                console.error(e);
+        });

@@ -1,5 +1,5 @@
 'use strict';
-const rpn = require('request-promise-native');
+const axios = require('axios');
 const { JSDOM } = require('jsdom');
 
 const urls = [];
@@ -16,33 +16,37 @@ urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/8");
 urls.push("https://www.sejuku.net/blog/category/programing/javascript/page/9");
 
 urls.forEach((url) => {
-	getTitle(url);
+        getTitle(url);
 });
 
 function getTitle(url) {
-	rpn(url).then((body) => {
-		try {
-			// const dom = new JSDOM(body);
-			getDom(body).then((dom) => {
+        axios.get(url)
+                .then((response) => {
+                        try {
+                                // const dom = new JSDOM(response.data);
+                                getDom(response.data).then((dom) => {
 
-				const selector = "#primary > div > div > div > article > header > h2 > a";
-				const aList = dom.window.document.querySelectorAll(selector);
+                                        const selector = "#primary > div > div > div > article > header > h2 > a";
+                                        const aList = dom.window.document.querySelectorAll(selector);
 
-				aList.forEach((a) => {
-					console.log(a.textContent);
-				});
+                                        aList.forEach((a) => {
+                                                console.log(a.textContent);
+                                        });
 
-				console.log("--------------------------------------------------------------------");
-			});
+                                        console.log("--------------------------------------------------------------------");
+                                });
 
-		} catch (e) {
-			console.error(e);
-		}
-	});
+                        } catch (e) {
+                                console.error(e);
+                        }
+                })
+                .catch(error => {
+                        console.error(error);
+                });
 }
 
 function getDom(body) {
-	return new Promise((resolve) => {
-		resolve(new JSDOM(body));
-	});
+        return new Promise((resolve) => {
+                resolve(new JSDOM(body));
+        });
 }
